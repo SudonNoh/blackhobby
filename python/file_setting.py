@@ -1,8 +1,6 @@
-from logging import raiseExceptions
-from msilib.schema import Error
 import os
 from PIL import Image
-
+import pandas as pd
 
 class file_setting:
     
@@ -20,3 +18,15 @@ class file_setting:
             
             else:
                 pass
+    
+    
+class excel_control:
+    
+    def key_load(self, file_name, sheet_name):
+        
+        file = pd.read_excel(file_name, sheet_name=sheet_name)
+        data = file.drop(file.index[0:6])
+        key = data[[data.columns[3]]].dropna(axis=0)
+        key_list = [j for i in key.values.tolist() for j in i]
+        
+        return key_list

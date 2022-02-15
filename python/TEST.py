@@ -41,3 +41,10 @@ for cell in cell_list:
         count += 1
 
 wb.save(filename = print_route+'/'+'print1.xlsx')
+
+
+import pandas as pd
+
+file = pd.read_excel('D:/BlackHobby_file/blackhobby/표_정리(6) new 2022.02.07.xlsx', sheet_name='TABLE CHECK')
+
+

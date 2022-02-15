@@ -6,6 +6,7 @@
 .vscode
 venv/
 img/
+*.xlsx
 
 
 # Byte-compiled / optimized / DLL files
