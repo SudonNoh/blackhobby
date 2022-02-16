@@ -46,6 +46,8 @@ class SubApp(QWidget):
     def initUI(self):
         # widgets
         self.img_label = QLabel('')
+        self.img_label2 = QLabel('Files: ')
+        self.img_lineEdit = QLineEdit()
         self.change_btn = QPushButton('Image Update')
         self.update_btn = QPushButton('Image Update')
         self.change_btn.setMaximumWidth(100)
@@ -70,6 +72,12 @@ class SubApp(QWidget):
         hbox2 = QHBoxLayout()
         hbox3 = QHBoxLayout()
         hbox4 = QHBoxLayout()
+        hbox5 = QHBoxLayout()
+        
+        hbox5.addStretch(1)
+        hbox5.addWidget(self.img_label2)
+        hbox5.addWidget(self.img_lineEdit)
+        hbox5.addStretch(1)
         
         hbox3.addStretch(1)
         hbox3.addWidget(self.img_label)
@@ -91,6 +99,8 @@ class SubApp(QWidget):
         hbox2.addStretch(1)
         
         vbox.addStretch(1)
+        vbox.addLayout(hbox5)
+        # vbox.addStretch(0.3)
         vbox.addLayout(hbox3)
         vbox.addLayout(hbox4)
         vbox.addStretch(1)
@@ -107,17 +117,22 @@ class SubApp(QWidget):
             directory='./',
             filter="image(*.jpg *.jpeg *.png)"
         )
+        urls_text = ', '.join(urls)
+        self.img_lineEdit.setText(urls_text)
+        self.img_lineEdit.setReadOnly(True)
         self.img_label.setText("Ready to Change Image.")
-        # 여기 할 차례 urls 를 목록으로 보여주기 or get해서 img_update로 보내기
         
     def img_update(self):
         
-        print(self.FileOpen[0])
+        update_imgs = self.img_lineEdit.text().split(', ')
+        # 불러온 update_imgs 를 update 시키는 방법을 구상해야 함
+        print(update_imgs)
         
     def add_open(self):
         
         FileOpen = QFileDialog.getOpenFileName(self, 'Open File', './')
         self.lineEdit.setText(FileOpen[0])
+        self.img_lineEdit.setReadOnly(True)
         
     def add_ok(self):
         
