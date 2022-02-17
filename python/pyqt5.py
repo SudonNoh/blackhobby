@@ -1,4 +1,4 @@
-from msilib.schema import Error
+import time
 import sys
 from PyQt5.QtWidgets import (
     QApplication, 
@@ -12,11 +12,8 @@ from PyQt5.QtWidgets import (
     QLineEdit, 
     QDesktopWidget, 
     QMessageBox,
-    QProgressBar,
-    QDialog,
     )
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QThread, pyqtSignal
 import file_setting as fs
 
 class MainApp(QMainWindow):
@@ -160,12 +157,12 @@ class SubApp(QWidget):
         
             # 'update_img'는 img의 주소
             # progressbar 입력 예정
-            count = 1
+            count = 0
             for i in update_imgs:
-                pbar_value = int(count/len(update_imgs)*100)
                 self.fs.img_change(i, 'image')
                 count += 1
-                
+                pbar_value = int(count/len(update_imgs)*100)
+
             # img 파일 주소를 초기화
             self.img_lineEdit.setText('')
             # ReadOnly를 True로 설정했던 lineEdit을 False로 설정
