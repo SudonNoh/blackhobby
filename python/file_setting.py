@@ -9,15 +9,20 @@ class file_setting:
         return file_list
     
     # folder_route는 원본 img가 있는 route
-    def img_change(self, img_list, folder_route, img_save_route):
-        for i in img_list:
-            if i[-4:]=='.png':
-                img = Image.open(folder_route+'/'+i)
-                img = img.transpose(Image.ROTATE_270)
-                img.save(img_save_route+'/'+i)
-            
-            else:
-                pass
+    # 차라리 for문을 밖에서 돌리는 방법을 생각하는게 낫다.
+    def img_change(self, image_route, img_save_route):
+        if image_route[-4:]=='.png':
+            img = Image.open(image_route)
+            img = img.transpose(Image.ROTATE_270)
+            file_route = image_route.split('/')
+            cr = os.getcwd().replace("\\", "/")
+            try:
+                img.save(cr + '/' + img_save_route + '/' + file_route[-1])
+            except FileNotFoundError:
+                os.makedirs(cr + '/' + img_save_route)
+                img.save(cr + '/' + img_save_route + '/' + file_route[-1])
+        else:
+            pass
     
     
 class excel_control:

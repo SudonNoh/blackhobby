@@ -1,18 +1,29 @@
+from msilib.schema import Error
 import sys
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QFileDialog, 
-    QPushButton, QLabel, QHBoxLayout, QVBoxLayout,
-    QMainWindow, QLineEdit, QDesktopWidget
+    QApplication, 
+    QWidget, 
+    QFileDialog, 
+    QPushButton, 
+    QLabel, 
+    QHBoxLayout, 
+    QVBoxLayout,
+    QMainWindow, 
+    QLineEdit, 
+    QDesktopWidget, 
+    QMessageBox,
+    QProgressBar,
+    QDialog,
     )
 from PyQt5.QtGui import QIcon
-
+from PyQt5.QtCore import QThread, pyqtSignal
+import file_setting as fs
 
 class MainApp(QMainWindow):
     
     def __init__(self):
         super().__init__()
         self.initUI()
-
         
     def initUI(self):
         # window Title, Icon
@@ -42,10 +53,11 @@ class SubApp(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
+        self.fs = fs.file_setting()
         
     def initUI(self):
         # widgets
-        self.img_label = QLabel('')
+        self.img_label = QLabel('Input URL for updating img')
         self.img_label2 = QLabel('Files: ')
         self.img_lineEdit = QLineEdit()
         self.change_btn = QPushButton('Image Update')
@@ -59,6 +71,14 @@ class SubApp(QWidget):
         self.Ok_btn = QPushButton('OK')
         self.Add_btn.setMaximumWidth(100)
         self.Ok_btn.setMaximumWidth(100)
+        
+        # widget's style
+        self.img_label.setStyleSheet(
+            "color: #0d3300;"
+            "padding: 5px;"
+            "font-weight: bold;"
+            "background-color: #53ff1a;"
+            )
         
         # Add_btn Click
         self.Add_btn.clicked.connect(self.add_open)
@@ -100,7 +120,6 @@ class SubApp(QWidget):
         
         vbox.addStretch(1)
         vbox.addLayout(hbox5)
-        # vbox.addStretch(0.3)
         vbox.addLayout(hbox3)
         vbox.addLayout(hbox4)
         vbox.addStretch(1)
@@ -117,16 +136,50 @@ class SubApp(QWidget):
             directory='./',
             filter="image(*.jpg *.jpeg *.png)"
         )
-        urls_text = ', '.join(urls)
-        self.img_lineEdit.setText(urls_text)
-        self.img_lineEdit.setReadOnly(True)
-        self.img_label.setText("Ready to Change Image.")
+        if not urls:
+            pass
+        else:
+            urls_text = ', '.join(urls)
+            self.img_lineEdit.setText(urls_text)
+            self.img_lineEdit.setReadOnly(True)
+            self.img_label.setText("Ready to Change Image.")
+            self.img_label.setStyleSheet(
+                "color: #332200;"
+                "padding: 5px;"
+                "font-weight: bold;"
+                "background-color: #ffaa00;"
+                )
         
     def img_update(self):
+        # img 파일 주소를 url로 불러와서 list로 변경
+        if not self.img_lineEdit.text():
+            QMessageBox.information(self, 'Error', 'Please input correct Img url.')
+            pass
+        else:
+            update_imgs = self.img_lineEdit.text().split(', ')
         
-        update_imgs = self.img_lineEdit.text().split(', ')
-        # 불러온 update_imgs 를 update 시키는 방법을 구상해야 함
-        print(update_imgs)
+            # 'update_img'는 img의 주소
+            # progressbar 입력 예정
+            count = 1
+            for i in update_imgs:
+                pbar_value = int(count/len(update_imgs)*100)
+                self.fs.img_change(i, 'image')
+                count += 1
+                
+            # img 파일 주소를 초기화
+            self.img_lineEdit.setText('')
+            # ReadOnly를 True로 설정했던 lineEdit을 False로 설정
+            self.img_lineEdit.setReadOnly(False)
+            self.img_label.setText("Input URL for updating img.")
+            self.img_label.setStyleSheet(
+                "color: #0d3300;"
+                "padding: 5px;"
+                "font-weight: bold;"
+                "background-color: #53ff1a;"
+                )
+            
+            # 업데이트 완료 표시
+            QMessageBox.information(self, 'Update', 'Image Updated !')
         
     def add_open(self):
         
@@ -137,7 +190,8 @@ class SubApp(QWidget):
     def add_ok(self):
         
         print(self.lineEdit.text())
-        
+
+    
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     first = MainApp()
