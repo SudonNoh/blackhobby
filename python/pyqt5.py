@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import (
     QLineEdit, 
     QDesktopWidget, 
     QMessageBox,
+    QRadioButton,
     )
 from PyQt5.QtGui import QIcon
 import file_setting as fs
@@ -30,7 +31,7 @@ class MainApp(QMainWindow):
         # window 위치 및 크기
         self.center()
         self.width = 300
-        self.height = 200
+        self.height = 250
         self.setFixedSize(self.width, self.height)
         
         # 작업 APP
@@ -64,6 +65,9 @@ class SubApp(QWidget):
         
         self.label = QLabel('File: ')
         self.lineEdit = QLineEdit()
+        self.rbtn1 = QRadioButton('4ml', self)
+        self.rbtn1.setChecked(True)
+        self.rbtn2 = QRadioButton('30ml', self)
         self.Add_btn = QPushButton('File Add')
         self.Ok_btn = QPushButton('OK')
         self.Add_btn.setMaximumWidth(100)
@@ -90,6 +94,7 @@ class SubApp(QWidget):
         hbox3 = QHBoxLayout()
         hbox4 = QHBoxLayout()
         hbox5 = QHBoxLayout()
+        hbox6 = QHBoxLayout()
         
         hbox5.addStretch(1)
         hbox5.addWidget(self.img_label2)
@@ -104,6 +109,11 @@ class SubApp(QWidget):
         hbox4.addWidget(self.change_btn)
         hbox4.addWidget(self.update_btn)
         hbox4.addStretch(1)
+        
+        hbox6.addStretch(1)
+        hbox6.addWidget(self.rbtn1)
+        hbox6.addWidget(self.rbtn2)
+        hbox6.addStretch(1)
         
         hbox.addStretch(1)
         hbox.addWidget(self.label)
@@ -120,6 +130,7 @@ class SubApp(QWidget):
         vbox.addLayout(hbox3)
         vbox.addLayout(hbox4)
         vbox.addStretch(1)
+        vbox.addLayout(hbox6)
         vbox.addLayout(hbox)
         vbox.addLayout(hbox2)
         vbox.addStretch(1)
