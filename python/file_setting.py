@@ -51,7 +51,6 @@ class excel_control:
     
     def check_list(self, url, sheet_name, folder_name):
         key_list = self.key_load(url, sheet_name)
-        print("route : ", self.route)
         
         # error 발생 코드
         error = 0
@@ -89,26 +88,26 @@ class excel_control:
         
         for n in range(loof_num):
             # 엑셀 파일 하나에 들어갈 image list 분리
-            if len(img_list)-(32*n+32-1) < 0:
+            if len(img_list)-(32*n+32) < 0:
                 adj_img = img_list[32*n:]
             else:
-                adj_img = img_list[32*n:32*n+32-1]
+                adj_img = img_list[32*n:32*n+32]
 
             wb = load_workbook(filename= self.route + '/' + 'image.xlsx')
             ws = wb.active
-
             count_img = 0
             for cell in cell_list:
                 count=3
                 for num in range(8):
-                    cell = cell + str(num+count)
+                    cell_position = cell + str(num+count)
                     img = Image(self.route + '/' + img_folder_name + '/' + adj_img[count_img])
                     img.height = height
                     img.width = width
-                    img.anchor = cell
+                    img.anchor = cell_position
                     ws.add_image(img)
                     count += 1
                     count_img += 1
-                    
-            wb.save(filename = self.route+'/'+save_folder_name+'/'+'file_'+str(n).zfill(2)+"_"+today)
+                    if len(adj_img)-count_img <= 0:
+                        break
+            wb.save(filename = self.route+'/'+save_folder_name+'/'+'print_'+str(n).zfill(2)+"_"+today+".xlsx")
 

@@ -56,7 +56,7 @@ class SubApp(QWidget):
         self.ec = fs.excel_control()
         self.sheet_name = 'TABLE CHECK'
         self.img_folder_name = 'image'
-        self.save_folder_name = 'excel'
+        self.save_folder_name = 'excels'
         self.img_height = 98.6
         self.img_width = 176
         
@@ -218,13 +218,18 @@ class SubApp(QWidget):
                     )
             elif error == 0:
                 
-                self.ec.make_excel(
-                    img_list, 
-                    self.img_folder_name, 
-                    self.save_folder_name, 
-                    self.img_height,
-                    self.img_width
-                    )
+                try:
+                    self.ec.make_excel(
+                        img_list, 
+                        self.img_folder_name, 
+                        self.save_folder_name, 
+                        self.img_height,
+                        self.img_width
+                        )
+                    
+                except FileNotFoundError:
+                    message = 'You must create folder(route: '+os.getcwd().replace("\\","/")+'/'+self.save_folder_name+' )'
+                    QMessageBox.warning(self, 'FolderNotFound', message)
                 
         except ValueError:
             if url[-4:] == 'xlsx':
