@@ -1,5 +1,5 @@
 import os
-from PIL import Image
+from PIL import Image as pil_image
 import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.drawing.image import Image
@@ -20,10 +20,9 @@ class file_setting:
     # 차라리 for문을 밖에서 돌리는 방법을 생각하는게 낫다.
     def img_change(self, image_route, folder_name):
         if image_route[-4:]=='.png':
-            img = Image.open(image_route)
-            img = img.transpose(Image.ROTATE_270)
+            img = pil_image.open(image_route)
+            img = img.transpose(pil_image.ROTATE_270)
             file_route = image_route.split('/')
-            cr = os.getcwd().replace("\\", "/")
             try:
                 img.save(self.route + '/' + folder_name + '/' + file_route[-1])
             except FileNotFoundError:

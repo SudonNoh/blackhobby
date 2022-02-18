@@ -1,4 +1,3 @@
-import time
 import os
 import sys
 from PyQt5.QtWidgets import (
@@ -13,7 +12,6 @@ from PyQt5.QtWidgets import (
     QLineEdit, 
     QDesktopWidget, 
     QMessageBox,
-    QRadioButton,
     )
 from PyQt5.QtGui import QIcon
 import file_setting as fs
