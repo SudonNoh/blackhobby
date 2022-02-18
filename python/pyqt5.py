@@ -1,4 +1,5 @@
 import time
+import os
 import sys
 from PyQt5.QtWidgets import (
     QApplication, 
@@ -26,7 +27,7 @@ class MainApp(QMainWindow):
     def initUI(self):
         # window Title, Icon
         self.setWindowTitle('BlackHobby')
-        self.setWindowIcon(QIcon('./img/logo.png'))
+        self.setWindowIcon(QIcon('./src/logo.png'))
         
         # window 위치 및 크기
         self.center()
@@ -52,6 +53,9 @@ class SubApp(QWidget):
         super().__init__()
         self.initUI()
         self.fs = fs.file_setting()
+        self.ec = fs.excel_control()
+        self.sheet_name = 'TABLE CHECK'
+        self.folder_name = 'image'
         
     def initUI(self):
         # widgets
@@ -65,9 +69,6 @@ class SubApp(QWidget):
         
         self.label = QLabel('File: ')
         self.lineEdit = QLineEdit()
-        self.rbtn1 = QRadioButton('4ml', self)
-        self.rbtn1.setChecked(True)
-        self.rbtn2 = QRadioButton('30ml', self)
         self.Add_btn = QPushButton('File Add')
         self.Ok_btn = QPushButton('OK')
         self.Add_btn.setMaximumWidth(100)
@@ -94,7 +95,6 @@ class SubApp(QWidget):
         hbox3 = QHBoxLayout()
         hbox4 = QHBoxLayout()
         hbox5 = QHBoxLayout()
-        hbox6 = QHBoxLayout()
         
         hbox5.addStretch(1)
         hbox5.addWidget(self.img_label2)
@@ -109,11 +109,6 @@ class SubApp(QWidget):
         hbox4.addWidget(self.change_btn)
         hbox4.addWidget(self.update_btn)
         hbox4.addStretch(1)
-        
-        hbox6.addStretch(1)
-        hbox6.addWidget(self.rbtn1)
-        hbox6.addWidget(self.rbtn2)
-        hbox6.addStretch(1)
         
         hbox.addStretch(1)
         hbox.addWidget(self.label)
@@ -130,7 +125,6 @@ class SubApp(QWidget):
         vbox.addLayout(hbox3)
         vbox.addLayout(hbox4)
         vbox.addStretch(1)
-        vbox.addLayout(hbox6)
         vbox.addLayout(hbox)
         vbox.addLayout(hbox2)
         vbox.addStretch(1)
@@ -165,12 +159,12 @@ class SubApp(QWidget):
             pass
         else:
             update_imgs = self.img_lineEdit.text().split(', ')
-        
+
             # 'update_img'는 img의 주소
             # progressbar 입력 예정
             count = 0
             for i in update_imgs:
-                self.fs.img_change(i, 'image')
+                self.fs.img_change(i, self.folder_name)
                 count += 1
                 pbar_value = int(count/len(update_imgs)*100)
 
@@ -188,7 +182,7 @@ class SubApp(QWidget):
             
             # 업데이트 완료 표시
             QMessageBox.information(self, 'Update', 'Image Updated !')
-        
+    
     def add_open(self):
         
         FileOpen = QFileDialog.getOpenFileName(self, 'Open File', './')
@@ -197,9 +191,42 @@ class SubApp(QWidget):
         
     def add_ok(self):
         
-        print(self.lineEdit.text())
-
-    
+        url = self.lineEdit.text()
+        
+        try:
+            error, img_list = self.ec.check_list(url, self.sheet_name, self.folder_name)
+            # 폴더가 존재하지 않음
+            if error == 1:
+                QMessageBox.information(
+                    self, 
+                    'not Found Error', 
+                    'Folder not Found\n'+'Folder : '+img_list
+                    )
+            elif error == 2:
+                QMessageBox.information(
+                    self, 
+                    'not Found Error', 
+                    'Key not Found\n'
+                    + 'Key : '
+                    + img_list
+                    + "\nYou must check your 'KEY Excel' or " 
+                    + "'"+ self.folder_name 
+                    + " folder'"
+                    )
+            elif error == 0:
+                
+                count= 1
+                for i in img_list:
+                    print(str(count)+"  : ", i)
+                    count+=1
+            
+        except ValueError:
+            if url[-4:] == 'xlsx':
+                QMessageBox.warning(self, 'ValueError', 'You must add Excel File with sheet "TABLE CHECK"')
+            elif url[-4:] != 'xlsx':
+                QMessageBox.warning(self, 'ValueError', 'You must add Excel File')
+        
+        
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     first = MainApp()
