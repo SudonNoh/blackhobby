@@ -2,7 +2,6 @@ import pandas as pd
 import os
 from PIL import Image
 
-
 file = pd.read_excel('C:/Users/SD NOH/Desktop/표_정리(6) new 2022.02.07.xlsx', sheet_name='TABLE')
 data = file.drop(file.index[0:6])
 key = data[[data.columns[1], data.columns[2]]].dropna(axis=0)
@@ -21,6 +20,10 @@ file_name5.pop(0)
 
 
 
+# img 변경
+import os
+from PIL import Image
+
 # 이미지 변경 및 이름 변경 후 저장
 # 원본 4ml 리스트
 load = 'D:/BlackHobby_file/blackhobby/원본_4ml'
@@ -32,6 +35,12 @@ for i in file_in_folder:
     if i[-4:] == '.png':
         img = Image.open(load + '/' + i)
         img = img.transpose(Image.ROTATE_270)
+        
+        if i[-7:] == '4ML.png':
+            i = i.replace('4ML.png', '4ml.png')
+        elif i[-5:] == '4.png':
+            i = i.replace('4.png', '4ml.png')
+            
         img.save(save_load + '/' + str(count).zfill(4) + '. ' + i)
         count += 1
     else:
@@ -48,7 +57,9 @@ for i in file_in_folder:
         img = Image.open(load + '/' + i)
         img = img.transpose(Image.ROTATE_270)
         
-        if '뒷면' in i:
+        if '뒷면.png' in i or '뒤.png' in i:
+            if i[-5:] == '뒤.png':
+                i = i.replace('뒤.png', '뒷면.png')
             img.save(save_load + '/' + str(count).zfill(4) + '. ' + i)
         else:
             img.save(save_load + '/' + str(count).zfill(4) + '. ' + i)

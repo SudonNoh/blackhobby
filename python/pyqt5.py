@@ -55,15 +55,18 @@ class SubApp(QWidget):
         self.fs = fs.file_setting()
         self.ec = fs.excel_control()
         self.sheet_name = 'TABLE CHECK'
-        self.folder_name = 'image'
+        self.img_folder_name = 'image'
+        self.save_folder_name = 'excel'
+        self.img_height = 98.6
+        self.img_width = 176
         
     def initUI(self):
         # widgets
         self.img_label = QLabel('Input URL for updating img')
         self.img_label2 = QLabel('Files: ')
         self.img_lineEdit = QLineEdit()
-        self.change_btn = QPushButton('Image Update')
-        self.update_btn = QPushButton('Image Update')
+        self.change_btn = QPushButton('File Add')
+        self.update_btn = QPushButton('OK')
         self.change_btn.setMaximumWidth(100)
         self.update_btn.setMaximumWidth(100)
         
@@ -164,7 +167,7 @@ class SubApp(QWidget):
             # progressbar 입력 예정
             count = 0
             for i in update_imgs:
-                self.fs.img_change(i, self.folder_name)
+                self.fs.img_change(i, self.img_folder_name)
                 count += 1
                 pbar_value = int(count/len(update_imgs)*100)
 
@@ -194,7 +197,7 @@ class SubApp(QWidget):
         url = self.lineEdit.text()
         
         try:
-            error, img_list = self.ec.check_list(url, self.sheet_name, self.folder_name)
+            error, img_list = self.ec.check_list(url, self.sheet_name, self.img_folder_name)
             # 폴더가 존재하지 않음
             if error == 1:
                 QMessageBox.information(
@@ -210,16 +213,19 @@ class SubApp(QWidget):
                     + 'Key : '
                     + img_list
                     + "\nYou must check your 'KEY Excel' or " 
-                    + "'"+ self.folder_name 
+                    + "'"+ self.img_folder_name 
                     + " folder'"
                     )
             elif error == 0:
                 
-                count= 1
-                for i in img_list:
-                    print(str(count)+"  : ", i)
-                    count+=1
-            
+                self.ec.make_excel(
+                    img_list, 
+                    self.img_folder_name, 
+                    self.save_folder_name, 
+                    self.img_height,
+                    self.img_width
+                    )
+                
         except ValueError:
             if url[-4:] == 'xlsx':
                 QMessageBox.warning(self, 'ValueError', 'You must add Excel File with sheet "TABLE CHECK"')
